@@ -26,6 +26,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Sizning TOKENingiz
+# Agar Render'da TOKEN o'rnatilgan bo'lsa, u ishlatiladi. Aks holda, odatiy token ishlatiladi.
 TOKEN = os.environ.get("TOKEN", "8349538809:AAH99J3Wa0tR3WmEDqTrlXmEy-NpSDoA0MQ")
 
 # /start komandasi (Chuqur havolani qabul qiladi)
@@ -37,7 +38,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     user_id = update.message.from_user.id
-    bot_username = context.bot.username
+    bot_username = (await context.bot.get_me()).username
     
     if context.args:
         # Chuqur havolani boshqarish: /start <target_id>
@@ -96,10 +97,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 # Xabar nusxasini yuborish (rasm, stiker, matn farqi yo'q)
                 await update.message.copy(chat_id=original_sender_id)
                 
-                # Qabul qiluvchiga tasdiqlash xabari
+                # Qabul qiluvchiga tasdiqlash xabari (quote argumenti olib tashlandi)
                 await update.message.reply_text(
-                    "Javobingiz anonim tarzda yuborildi ✅",
-                    quote=True 
+                    "Javobingiz anonim tarzda yuborildi ✅"
                 )
                 logger.info(f"Reply from {sender_id} sent to original sender {original_sender_id}")
             except Exception as e:
